@@ -19,4 +19,12 @@ node {
             sh 'docker push veers019/veera:my-app'
 
       }
+      
+       stage('Run container on dev server'){
+        def dockerRun = 'docker run -d --name my-app -p 8080:8080 veers019/veera:my-app'
+        sshagent(['tomcat-dev']) {
+            sh "ssh -o StrictHostKeyChecking=no ec2-user@3.7.45.251 ${dockerRun}"
+        }
+       
+     }
 }
