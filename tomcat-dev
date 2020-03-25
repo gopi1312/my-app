@@ -1,0 +1,16 @@
+node {
+     stage('SCM checkout'){
+        git credentialsId: 'git-creds', url: 'https://github.com/veers019/my-app.git'
+        
+     }
+     stage('maven package'){
+        def mvnHome = tool name: 'maven', type: 'maven'
+        sh "${mvnHome}/bin/mvn package"
+     }
+     
+     stage('Deploy to Tomcat'){
+        sshagent(['tomcat-dev']){
+           sh 'scp -o StrictHostKeyChecking=no  target/*.war ec2-user@3.7.45.251:/opt/tomcat/webapps '
+        }
+      
+      }
