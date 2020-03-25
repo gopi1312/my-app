@@ -7,9 +7,16 @@ node {
         def mvnHome = tool name: 'maven', type: 'maven'
         sh "${mvnHome}/bin/mvn package"
      }
-     
-        
+             
       stage('Build dcoker image'){
         sh 'docker build -t veers019/veera:1.0 .'
      }
+     
+      stage('Push docker image') {
+        withCredentials([string(credentialsId: 'docker-pwd', variable: 'dockerHubPwd')]) {
+            sh "docker login -u veers019 -p ${dockerHubPwd}"  
+        }
+            sh 'docker push veers019/veera:my-app'
+
+      }
 }
