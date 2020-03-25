@@ -8,10 +8,8 @@ node {
         sh "${mvnHome}/bin/mvn package"
      }
      
-     stage('Deploy to Tomcat server'){
-        sshagent(['tomcat-dev']){
-           sh 'scp -o StrictHostKeyChecking=no  target/*.war ec2-user@3.7.45.251:/opt/tomcat/webapps '
-        }
-      
-      }
+        
+      stage('Build dcoker image'){
+        sh 'docker build -t veers019/veera:1.0 .'
+     }
 }
