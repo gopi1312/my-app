@@ -30,8 +30,10 @@ node {
      
      stage('Email Notification'){
 		mail bcc: '', body: """Hi Team, Your build successfully deployed
-		                       Job URL : ${env.JOB_URL}
-							   Job Name: ${env.JOB_NAME}
+		Job URL : ${env.JOB_URL}
+		Job Name: ${env.JOB_NAME}
+		
+		
 Thanks,
 DevOps Team""", cc: '', from: 'veera.boss93@gmail.com', replyTo: '', subject: "${env.JOB_NAME} Success", to: 'veera.boss93@gmail.com'
    
