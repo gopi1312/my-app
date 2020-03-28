@@ -13,7 +13,21 @@ node {
         withSonarQubeEnv('Sonar-2') { 
           sh "${mvnHome}/bin/mvn sonar:sonar"
         }
-    }
+      }
+    
+      stage("Quality Gate Statuc Check"){
+          timeout(time: 1, unit: 'HOURS') {
+              def qg = waitForQualityGate()
+              if (qg.status != 'OK') {
+                   slackSend baseUrl: 'https://hooks.slack.com/services/', 
+                   channel: '#devops', 
+                   color: 'danger', 
+                   message: 'SonarQube Analysis Failed', 
+                   tokenCredentialId: 'slack-creds'
+                   error "Pipeline aborted due to quality gate failure: ${qg.status}"
+              }
+          }
+      }    
              
      stage('Build dcoker image'){
         sh 'docker build -t veers019/veera:1.0 .'
@@ -42,10 +56,22 @@ node {
 		Job URL : ${env.JOB_URL}
 		Job Name: ${env.JOB_NAME}
 		
-		
-		
-Thanks,
-DevOps Team""", cc: '', from: 'veera.boss93@gmail.com', replyTo: '', subject: "${env.JOB_NAME} Success", to: 'veera.boss93@gmail.com'
+				
+              Thanks,
+               DevOps Team""", cc: '', 
+	       from: 'veera.boss93@gmail.com', 
+	       replyTo: '', subject: "${env.JOB_NAME} Success", 
+	       to: 'veera.boss93@gmail.com'
    
+     }
+   
+     stage('Slack Notification'){
+
+       slackSend baseUrl: 'https://hooks.slack.com/services/', 
+       channel: '#devops', 
+       color: 'good', 
+       message: 'Pipeline build got success', 
+       tokenCredentialId: 'slack-creds'
+       
    }
 }
