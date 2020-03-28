@@ -8,6 +8,25 @@ node {
         sh "${mvnHome}/bin/mvn package"
      }
      
+     stage('upload to nexus'){
+        nexusArtifactUploader artifacts: [
+            
+          [
+              artifactId: 'myweb', 
+              classifier: '', 
+              file: 'target/myweb-1.0.0.war', 
+              type: 'war'
+          ]
+        ], 
+        credentialsId: 'nexus-creds',
+        groupId: 'in.javahome', 
+        nexusUrl: '15.206.91.143:8081', 
+        nexusVersion: 'nexus', 
+        protocol: 'http', 
+        repository: 'veera-release', 
+        version: '1.0.0'
+     }
+     
      stage('SonarQube Analysis') {
         def mvnHome =  tool name: 'maven', type: 'maven'
         withSonarQubeEnv('Sonar-2') { 
